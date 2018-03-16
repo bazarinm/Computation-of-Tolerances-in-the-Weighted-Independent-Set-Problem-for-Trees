@@ -12,6 +12,9 @@ namespace TreeTol {
 
 			std::size_t parent_key;
 			std::vector<std::size_t> children_keys;
+
+			bool isRoot() const { return key == parent_key; };
+			bool isLeaf() const { return children_keys.empty(); };
 		};
 		std::vector<InfoNode> BFS_order;
 

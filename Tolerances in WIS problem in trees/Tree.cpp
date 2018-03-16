@@ -29,7 +29,6 @@ Tree::Tree(std::size_t root_n, const std::string& filename) {
 	while (!file.eof()) {
 		file >> key;
 		file >> weight;
-		//if (!file.good()) break;
 		nodes_[key] = { key, weight };
 		if (key == root_n)
 			root_ = nodes_[key];

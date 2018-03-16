@@ -13,7 +13,8 @@ namespace TreeTol {
 			std::vector<int> is_used(t.getSize(), 0);
 
 			Node root = t.getRoot();
-			BFS_order.emplace_back(root.key, root.weight, root.key);
+			InfoNode info_root = { root.key, root.weight, root.key };
+			BFS_order.push_back(info_root);
 			parents.push(root.key);
 			is_used[root.key] = 1;
 
@@ -28,7 +29,8 @@ namespace TreeTol {
 						BFS_order[count].children_keys.push_back(key);
 
 						Node node = t.getNode(key);
-						BFS_order.emplace_back(node.key, node.weight, parent_key);
+						InfoNode info_node = { node.key, node.weight, parent_key };
+						BFS_order.push_back(info_node);
 						is_used[key] = 1;
 					}
 				}
@@ -43,23 +45,54 @@ namespace TreeTol {
 
 	void alg(Tree& t) {
 		makeOrdered(t);
-		for (InfoNode node : BFS_order) {
-			std::cout << "Node " << node.key << ": parent - " << node.parent_key;
-			std::cout << " , children: ";
-			for (std::size_t ch : node.children_keys)
-				std::cout << ch << " ";
-			std::cout << std::endl;
+		std::size_t size = BFS_order.size();
+
+		std::vector<std::size_t> w(size);
+		std::vector<std::size_t> win(size);
+		std::vector<std::size_t> wout(size);
+
+		std::vector<std::list<std::size_t>*> s(size);
+		std::vector<std::list<std::size_t>> sin(size);
+		std::vector<std::list<std::size_t>> sout(size);
+
+		std::vector<std::list<std::size_t>*> sin_sub_s(size);
+		std::vector<std::list<std::size_t>> sout_sub_s(size);
+		std::vector<std::list<std::size_t>> s_sub_sout(size);
+
+		for (std::size_t i = 0; i < size; ++i) {
+			InfoNode x = BFS_order[size - i - 1]; //reverse BFS order
+			if (x.isLeaf()) {
+				wout[x.key] = 0;
+				sout[x.key] = {};
+				win[x.key] = x.weight;
+				sin[x.key] = { x.key };
+				w[x.key] = win[x.key];
+				s[x.key] = &sin[x.key];
+			}
+			else {
+				win[x.key] = x.weight;
+				sin[x.key] = { x.key };
+				wout[x.key] = 0;
+				sout[x.key] = {};
+				for (std::size_t y : x.children_keys) {
+					win[x.key] += wout[y];
+					sin[x.key].splice(sin[x.key].begin(), sout[y]);
+					wout[x.key] += w[y];
+					sout[x.key].splice(sout[x.key].begin(), *s[y]);
+				}
+
+				w[x.key] = std::max(win[x.key], wout[x.key]);
+				if (w[x.key] > wout[x.key]) s[x.key] = &sin[x.key];
+				else s[x.key] = &sout[x.key];
+			}
+
 		}
-		//std::size_t tree_size = t.getSize();
 
-		/*std::vector<std::size_t> w(tree_size);
-		std::vector<std::size_t> w_in(tree_size);
-		std::vector<std::size_t> w_out(tree_size);
-
-		std::vector<std::list<std::size_t>*> s(tree_size);
-		std::vector<std::list<std::size_t>> s_in(tree_size);
-		std::vector<std::list<std::size_t>> s_out(tree_size);*/
-
+		std::cout << "max independed set: " << std::endl;
+		for (std::size_t key : *s[t.getRoot().key]) {
+			std::cout << "key " << key << " of weight " << t.getNode(key).weight << std::endl;
+		}
+		std::cout << "total weight = " << w[t.getRoot().key];
 	}
 
 }

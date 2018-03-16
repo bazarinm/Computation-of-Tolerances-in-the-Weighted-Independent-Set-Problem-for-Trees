@@ -1,7 +1,6 @@
 #ifndef TREE_H
 #define TREE_H
 
-//#include "Node.h"
 #include <vector>
 #include <deque>
 
@@ -30,8 +29,6 @@ private:
 	std::vector<Node> nodes_;
 	std::vector<std::vector<std::size_t>> adjacency_list_;
 	std::vector<std::vector<int>> adjacency_matrix_;
-
-	//void buildFromCode(const std::string& filename)
 };
 
 #endif
