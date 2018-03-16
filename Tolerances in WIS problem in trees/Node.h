@@ -7,6 +7,7 @@
 class Node 
 {
 public:
+	Node(std::size_t key, std::size_t weight);
 	bool isLeaf() const;
 	bool isRoot() const;
 
@@ -20,11 +21,11 @@ public:
 	const std::vector<std::size_t>& getChildrenKeys() const;
 	void setChilrenKeys(const std::vector<std::size_t>& c);
 private:
-	std::size_t key;
-	std::size_t weight;
+	std::size_t key_;
+	std::size_t weight_;
 
-	std::size_t parent_key;
-	std::vector<std::size_t> children_keys;
+	std::size_t parent_key_;
+	std::vector<std::size_t> children_keys_;
 };
 
 #endif

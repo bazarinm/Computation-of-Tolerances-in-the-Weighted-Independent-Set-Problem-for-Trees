@@ -1,29 +1,37 @@
 #ifndef TREE_H
 #define TREE_H
 
-#include "Node.h"
+//#include "Node.h"
 #include <vector>
 #include <deque>
+
+struct Node {
+	std::size_t key;
+	int weight;
+};
 
 class Tree
 {
 public:
-	Tree(size_t root, std::vector<std::size_t>& code);
+	Tree(std::size_t root_n, const std::string& filename);
 	~Tree();
 
 	std::size_t getSize() const;
 
+	Node getRoot() const;
+	Node getNode(std::size_t key) const;
 	const std::vector<std::size_t>& getAdjacent(std::size_t v) const;
-	const std::vector<Node>& getOrdered() const;
-	const Node& getFromOrdered(std::size_t v) const;
 
 	void print() const;
 private:
-	std::size_t size;
-	std::vector<std::vector<std::size_t>> adjacency_list;
-	std::vector<Node> ordered_list;
+	std::size_t size_;
 
-	void toOrdered(std::size_t v);
+	Node root_;
+	std::vector<Node> nodes_;
+	std::vector<std::vector<std::size_t>> adjacency_list_;
+	std::vector<std::vector<int>> adjacency_matrix_;
+
+	//void buildFromCode(const std::string& filename)
 };
 
 #endif
