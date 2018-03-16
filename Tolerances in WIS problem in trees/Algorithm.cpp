@@ -6,9 +6,9 @@
 
 namespace TreeTol {
 
-namespace {
+	namespace {
 
-void makeOrdered(Tree& t) {
+		void makeOrdered(Tree& t) {
 			std::queue<std::size_t> parents;
 			std::vector<int> is_used(t.getSize(), 0);
 
@@ -38,30 +38,28 @@ void makeOrdered(Tree& t) {
 
 		}
 
-}
 
-void alg(Tree& t) {
-	makeOrdered(t);
-	for (InfoNode node : BFS_order) {
-		std::cout << "Node " << node.key << ": parent - " << node.parent_key;
-		std::cout << " , children: ";
-		for (std::size_t ch : node.children_keys)
-			std::cout << ch << " ";
-		std::cout << std::endl;
 	}
-	//std::size_t tree_size = t.getSize();
 
-	/*std::vector<std::size_t> w(tree_size);
-	std::vector<std::size_t> w_in(tree_size);
-	std::vector<std::size_t> w_out(tree_size);
+	void alg(Tree& t) {
+		makeOrdered(t);
+		for (InfoNode node : BFS_order) {
+			std::cout << "Node " << node.key << ": parent - " << node.parent_key;
+			std::cout << " , children: ";
+			for (std::size_t ch : node.children_keys)
+				std::cout << ch << " ";
+			std::cout << std::endl;
+		}
+		//std::size_t tree_size = t.getSize();
 
-	std::vector<std::list<std::size_t>*> s(tree_size);
-	std::vector<std::list<std::size_t>> s_in(tree_size);
-	std::vector<std::list<std::size_t>> s_out(tree_size);*/
-	
-}
+		/*std::vector<std::size_t> w(tree_size);
+		std::vector<std::size_t> w_in(tree_size);
+		std::vector<std::size_t> w_out(tree_size);
 
+		std::vector<std::list<std::size_t>*> s(tree_size);
+		std::vector<std::list<std::size_t>> s_in(tree_size);
+		std::vector<std::list<std::size_t>> s_out(tree_size);*/
 
+	}
 
-	
 }
