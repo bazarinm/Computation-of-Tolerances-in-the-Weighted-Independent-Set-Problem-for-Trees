@@ -112,10 +112,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Algorithm.h" />
+    <ClInclude Include="NaiveList.h" />
     <ClInclude Include="Tree.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Algorithm.cpp" />
+    <ClCompile Include="NaiveList.cpp" />
     <ClCompile Include="Source.cpp" />
     <ClCompile Include="Tree.cpp" />
   </ItemGroup>

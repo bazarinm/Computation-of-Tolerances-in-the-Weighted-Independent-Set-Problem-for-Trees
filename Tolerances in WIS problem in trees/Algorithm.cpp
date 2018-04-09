@@ -1,5 +1,7 @@
 #include "Algorithm.h"
 
+#include "Tree.h"
+#include "NaiveList.h"
 #include <queue>
 #include <list>
 #include <iostream>
@@ -51,45 +53,56 @@ namespace TreeTol {
 		std::vector<std::size_t> win(size);
 		std::vector<std::size_t> wout(size);
 
-		std::vector<std::list<std::size_t>*> s(size);
-		std::vector<std::list<std::size_t>> sin(size);
-		std::vector<std::list<std::size_t>> sout(size);
+		std::vector<NaiveList*> s(size);
+		std::vector<NaiveList> sin(size);
+		std::vector<NaiveList> sout(size);
+		std::vector<NaiveList> sin_aux(size);
+		std::vector<NaiveList> sout_aux(size);
 
-		std::vector<std::list<std::size_t>*> sin_sub_s(size);
-		std::vector<std::list<std::size_t>> sout_sub_s(size);
-		std::vector<std::list<std::size_t>> s_sub_sout(size);
+		std::vector<std::size_t> Win(size);
+		std::vector<std::size_t> Wout(size);
 
 		for (std::size_t i = 0; i < size; ++i) {
 			InfoNode x = BFS_order[size - i - 1]; //reverse BFS order
 			if (x.isLeaf()) {
-				wout[x.key] = 0;
-				sout[x.key] = {};
-				win[x.key] = x.weight;
 				sin[x.key] = { x.key };
+				sin_aux[x.key] = { x.key };
+				win[x.key] = x.weight;
+				sout[x.key] = {};
+				sout_aux[x.key] = {};
+				wout[x.key] = 0;
+
 				w[x.key] = win[x.key];
 				s[x.key] = &sin[x.key];
 			}
 			else {
-				win[x.key] = x.weight;
 				sin[x.key] = { x.key };
-				wout[x.key] = 0;
+				sin_aux[x.key] = { x.key };
+				win[x.key] = x.weight;
 				sout[x.key] = {};
+				sout_aux[x.key] = {};
+				wout[x.key] = 0;
+
 				for (std::size_t y : x.children_keys) {
+					sin[x.key] += sout[y];
+					sin_aux[x.key] += sout[y];
 					win[x.key] += wout[y];
-					sin[x.key].splice(sin[x.key].begin(), sout[y]);
-					wout[x.key] += w[y];
-					sout[x.key].splice(sout[x.key].begin(), *s[y]);
+					sout[x.key] += *s[y];
+					wout[x.key] += w[y];	
 				}
 
 				w[x.key] = std::max(win[x.key], wout[x.key]);
-				if (w[x.key] > wout[x.key]) s[x.key] = &sin[x.key];
+				if (win[x.key] > wout[x.key]) s[x.key] = &sin_aux[x.key];
 				else s[x.key] = &sout[x.key];
 			}
-
 		}
 
 		std::cout << "max independed set: " << std::endl;
-		for (std::size_t key : *s[t.getRoot().key]) {
+		NaiveList MWIS = *s[t.getRoot().key];
+		unsigned key;
+		for (std::size_t i = 0; i < MWIS.getSize(); ++i) {
+			key = MWIS.getCurrent();
+			MWIS.toNext();
 			std::cout << "key " << key << " of weight " << t.getNode(key).weight << std::endl;
 		}
 		std::cout << "total weight = " << w[t.getRoot().key];
