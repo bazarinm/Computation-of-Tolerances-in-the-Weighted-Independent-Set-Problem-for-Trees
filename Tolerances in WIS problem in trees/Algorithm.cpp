@@ -47,65 +47,87 @@ namespace TreeTol {
 
 	void alg(Tree& t) {
 		makeOrdered(t);
-		std::size_t size = BFS_order.size();
+		std::size_t size = t.getSize();
+		std::size_t root = t.getRoot().key;
 
-		std::vector<std::size_t> w(size);
-		std::vector<std::size_t> win(size);
-		std::vector<std::size_t> wout(size);
+		std::vector<double> w(size);
+		std::vector<double> win(size);
+		std::vector<double> wout(size);
 
-		std::vector<NaiveList*> s(size);
-		std::vector<NaiveList> sin(size);
-		std::vector<NaiveList> sout(size);
-		std::vector<NaiveList> sin_aux(size);
-		std::vector<NaiveList> sout_aux(size);
+		std::vector<std::size_t> s;
 
-		std::vector<std::size_t> Win(size);
-		std::vector<std::size_t> Wout(size);
+		std::vector<double> Win(size);
+		std::vector<double> Wout(size);
+
+		std::vector<double> l(size);
+		std::vector<double> u(size);
 
 		for (std::size_t i = 0; i < size; ++i) {
 			InfoNode x = BFS_order[size - i - 1]; //reverse BFS order
 			if (x.isLeaf()) {
-				sin[x.key] = { x.key };
-				sin_aux[x.key] = { x.key };
 				win[x.key] = x.weight;
-				sout[x.key] = {};
-				sout_aux[x.key] = {};
 				wout[x.key] = 0;
 
 				w[x.key] = win[x.key];
-				s[x.key] = &sin[x.key];
 			}
 			else {
-				sin[x.key] = { x.key };
-				sin_aux[x.key] = { x.key };
 				win[x.key] = x.weight;
-				sout[x.key] = {};
-				sout_aux[x.key] = {};
 				wout[x.key] = 0;
 
 				for (std::size_t y : x.children_keys) {
-					sin[x.key] += sout[y];
-					sin_aux[x.key] += sout[y];
 					win[x.key] += wout[y];
-					sout[x.key] += *s[y];
 					wout[x.key] += w[y];	
 				}
 
 				w[x.key] = std::max(win[x.key], wout[x.key]);
-				if (win[x.key] > wout[x.key]) s[x.key] = &sin_aux[x.key];
-				else s[x.key] = &sout[x.key];
 			}
 		}
 
+		std::vector<int> is_used(size, 0);
+		for (InfoNode x : BFS_order) {
+			if (x.isRoot()) {
+				Win[x.key] = win[x.key];
+				Wout[x.key] = wout[x.key];
+			}
+			else {
+				Win[x.key] = Wout[x.parent_key] - w[x.key] + win[x.key];
+				Wout[x.key] = wout[x.key] + std::max(Win[x.parent_key] - wout[x.key],
+													 Wout[x.parent_key] - w[x.key]);
+			}
+			if (!is_used[x.parent_key] && win[x.key] >= wout[x.key]) {
+				s.push_back(x.key);
+				is_used[x.key] = 1;
+			}
+		}
+
+		for (InfoNode x : BFS_order) {
+			if (is_used[x.key]) {
+				l[x.key] = w[root] - Wout[x.key];
+				u[x.key] = -1;
+			}
+			else {
+				u[x.key] = w[root] - Win[x.key];
+				l[x.key] = -1;
+			}
+		}
+
+
 		std::cout << "max independed set: " << std::endl;
-		NaiveList MWIS = *s[t.getRoot().key];
-		unsigned key;
-		for (std::size_t i = 0; i < MWIS.getSize(); ++i) {
-			key = MWIS.getCurrent();
-			MWIS.toNext();
+		for (std::size_t key : s) {
 			std::cout << "key " << key << " of weight " << t.getNode(key).weight << std::endl;
 		}
 		std::cout << "total weight = " << w[t.getRoot().key];
+
+		std::cout << std::endl << std::endl;
+
+		std::cout << "tolerances: " << std::endl;
+		for (InfoNode x : BFS_order) {
+			std::size_t key = x.key;
+			if(is_used[key])
+				std::cout << "key " << key << " with lower tolerance " << l[key] << std::endl;
+			else
+				std::cout << "key " << key << " with upper tolerance " << u[key] << std::endl;
+		}
 	}
 
 }
