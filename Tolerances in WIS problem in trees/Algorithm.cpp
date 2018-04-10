@@ -24,8 +24,8 @@ namespace TreeTol {
 			while (!parents.empty()) {
 				std::size_t parent_key = parents.front();
 
-				std::vector<std::size_t> adjacent = t.getAdjacent(parent_key);
-				for (std::size_t key : adjacent) {
+				//std::vector<std::size_t> adjacent = t.getAdjacent(parent_key);
+				for (std::size_t key : t.getAdjacent(parent_key)) {
 					if (!is_used[key]) {
 						parents.push(key);
 						BFS_order[count].children_keys.push_back(key);
