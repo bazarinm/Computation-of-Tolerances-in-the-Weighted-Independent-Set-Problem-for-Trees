@@ -1,19 +1,20 @@
 #include "Tree.h"
 
 #include <vector>
+#include <exception>
 #include <iostream>
 #include <fstream>
 #include <string>
 
-Tree::Tree(std::size_t root_, const std::string& filename) {
+Tree::Tree(std::size_t root_key, const std::string& filename) {
 	std::fstream file(filename);
 	if (!file.is_open())
-		throw "Error opening file";
+		throw std::exception("Cant open file");
 
-	std::string char_code;
+	std::string code_string;
 	std::vector<std::size_t> code;
-	std::getline(file, char_code);
-	for (char c : char_code)
+	std::getline(file, code_string);
+	for (char c : code_string)
 		code.push_back(c - '0');
 	std::reverse(code.begin(), code.end());
 	size = code.size() + 2;
@@ -25,30 +26,39 @@ Tree::Tree(std::size_t root_, const std::string& filename) {
 		row.resize(size);
 
 	std::size_t key;
-	int weight;
+	double weight;
 	while (!file.eof()) {
 		file >> key;
 		file >> weight;
 		nodes[key] = { key, weight };
-		if (key == root_)
+		if (key == root_key)
 			root = nodes[key];
 	}
 
 	std::vector<int> in_code(size, 0);
 	std::vector<int> is_used(size, 0);
+
+	for (std::size_t code_key : code)
+		if (code_key > size)
+			throw std::exception("Bad code");
+		else
+			++in_code[code_key];
+
 	while (!code.empty()) {
-		for (std::size_t i = 0; i < code.size(); ++i)
-			if (code[i] < size)
-				in_code[code[i]] = 1;
-			else
-				throw "Incorrect code!";
+
+
 		for (std::size_t i = 0; i < size; ++i)
-			if (!in_code[i] && !is_used[i]) {
-				adjacency_list[i].push_back(code.back());
-				adjacency_list[code.back()].push_back(i);
+			if (in_code[i] == 0 && !is_used[i]) {
+				std::size_t code_key = code.back();
+
+				adjacency_list[i].push_back(code_key);
+				adjacency_list[code_key].push_back(i);
+
+				adjacency_matrix[i][code_key] =
+					adjacency_matrix[code_key][i] = 1;
 
 				is_used[i] = 1;
-				in_code[code.back()] = 0;
+				--in_code[code_key];
 				code.pop_back();
 				break;
 			}
@@ -58,49 +68,13 @@ Tree::Tree(std::size_t root_, const std::string& filename) {
 			adjacency_list[i].push_back(size - 1);
 			adjacency_list[size - 1].push_back(i);
 
+			adjacency_matrix[i][size - 1] =
+				adjacency_matrix[size - 1][i] = 1;
+
 			break;
 		}
 
-	for (std::size_t i = 0; i < size; ++i)
-		for (std::size_t j = 0; j < adjacency_list[i].size(); ++j)
-			adjacency_matrix[i][adjacency_list[i][j]] = 1;
 }
-
-//void Tree::toOrdered(std::size_t v) {
-//	std::queue<std::size_t> parents;
-//	std::vector<int> is_used(size, 0);
-//	parents.push(v);
-//
-//	Node n;
-//	n.setKey(v);
-//	n.setParentKey(v);
-//	ordered_list.push_back(n);
-//	is_used[v] = 1;
-//
-//	while (!parents.empty()) {
-//		v = parents.front();
-//
-//		for (std::size_t i = 0; i < adjacency_list[v].size(); ++i) {
-//			if (!is_used[adjacency_list[v][i]]) {
-//				parents.push(adjacency_list[v][i]);
-//
-//				//Node n;
-//				n.setKey(adjacency_list[v][i]);
-//				n.setParentKey(v);
-//				n.setChilrenKeys(adjacency_list[i]);
-//
-//				ordered_list.push_back(n);
-//				is_used[adjacency_list[v][i]] = 1;
-//			}
-//		}
-//		parents.pop();
-//	}
-//}
-
-Tree::~Tree()
-{
-}
-
 
 std::size_t Tree::getSize() const {
 	return size;
@@ -114,8 +88,8 @@ Node Tree::getNode(std::size_t key) const {
 	return nodes[key];
 }
 
-const std::vector<std::size_t>& Tree::getAdjacent(std::size_t v) const {
-	return adjacency_list[v];
+const std::vector<std::size_t>& Tree::getAdjacent(std::size_t key) const {
+	return adjacency_list[key];
 }
 
 void Tree::print() const {

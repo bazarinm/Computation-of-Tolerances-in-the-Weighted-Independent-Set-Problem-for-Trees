@@ -6,20 +6,20 @@
 
 struct Node {
 	std::size_t key;
-	int weight;
+	double weight;
 };
 
 class Tree
 {
 public:
-	Tree(std::size_t root, const std::string& filename);
-	~Tree();
+	Tree(std::size_t root_key, const std::string& filename);
+	~Tree() = default;
 
 	std::size_t getSize() const;
 
 	Node getRoot() const;
 	Node getNode(std::size_t key) const;
-	const std::vector<std::size_t>& getAdjacent(std::size_t v) const;
+	const std::vector<std::size_t>& getAdjacent(std::size_t key) const;
 
 	void print() const;
 private:
@@ -27,8 +27,8 @@ private:
 
 	Node root;
 	std::vector<Node> nodes;
-	std::vector<std::vector<std::size_t>> adjacency_list;
 	std::vector<std::vector<int>> adjacency_matrix;
+	std::vector<std::vector<std::size_t>> adjacency_list;
 };
 
 #endif
