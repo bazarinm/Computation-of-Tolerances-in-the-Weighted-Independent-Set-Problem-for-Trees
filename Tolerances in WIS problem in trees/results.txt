@@ -1,0 +1,8 @@
+lower tolerance of vertice 0 is 7
+upper tolerance of vertice 1 is 7
+upper tolerance of vertice 2 is 4
+upper tolerance of vertice 3 is 7
+lower tolerance of vertice 4 is 2
+lower tolerance of vertice 5 is 4
+lower tolerance of vertice 6 is 2
+lower tolerance of vertice 7 is 0

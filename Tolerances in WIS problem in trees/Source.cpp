@@ -10,11 +10,10 @@
 
 
 int main() {
-	std::vector<std::size_t> code = { 1, 2, 2, 3, 0, 1 };
+	//std::vector<std::size_t> code = { 1, 2, 2, 3, 0, 1 };
 	Tree mytree(0, "tree.txt");
-	mytree.print();
 	
-	TreeTol::alg(mytree);
+	TreeTol::algorithm(mytree);
 
 	std::cin.get();
 

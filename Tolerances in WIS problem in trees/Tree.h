@@ -12,7 +12,7 @@ struct Node {
 class Tree
 {
 public:
-	Tree(std::size_t root_n, const std::string& filename);
+	Tree(std::size_t root, const std::string& filename);
 	~Tree();
 
 	std::size_t getSize() const;
@@ -23,12 +23,12 @@ public:
 
 	void print() const;
 private:
-	std::size_t size_;
+	std::size_t size;
 
-	Node root_;
-	std::vector<Node> nodes_;
-	std::vector<std::vector<std::size_t>> adjacency_list_;
-	std::vector<std::vector<int>> adjacency_matrix_;
+	Node root;
+	std::vector<Node> nodes;
+	std::vector<std::vector<std::size_t>> adjacency_list;
+	std::vector<std::vector<int>> adjacency_matrix;
 };
 
 #endif

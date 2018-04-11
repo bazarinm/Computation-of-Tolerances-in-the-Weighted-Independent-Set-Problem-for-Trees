@@ -4,9 +4,12 @@
 #include "Tree.h"
 #include "NaiveList.h"
 #include <vector>
+#include <string>
 
 namespace TreeTol {
+
 	namespace {
+
 		struct InfoNode {
 			std::size_t key;
 			int weight;
@@ -17,11 +20,14 @@ namespace TreeTol {
 			bool isRoot() const { return key == parent_key; };
 			bool isLeaf() const { return children_keys.empty(); };
 		};
-		std::vector<InfoNode> BFS_order;
 
-		void makeOrdered(Tree& t);
+		std::vector<InfoNode> makeOrdered(Tree& t);
+		void printResult(const std::string& filename,
+						 const std::vector<double>& l, 
+						 const std::vector<double>& u);
 	}
-	void alg(Tree& t);
+
+	void algorithm(Tree& t);
 }
 
 #endif // !ALGORITHM_H
