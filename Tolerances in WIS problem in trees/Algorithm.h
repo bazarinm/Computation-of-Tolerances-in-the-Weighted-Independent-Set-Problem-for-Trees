@@ -2,7 +2,6 @@
 #define ALGORITHM_H
 
 #include "Tree.h"
-#include "NaiveList.h"
 #include <vector>
 #include <string>
 

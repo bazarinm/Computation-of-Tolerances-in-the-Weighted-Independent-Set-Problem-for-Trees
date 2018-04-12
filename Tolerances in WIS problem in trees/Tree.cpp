@@ -3,10 +3,13 @@
 #include <vector>
 #include <exception>
 #include <iostream>
+#include <random>
 #include <fstream>
 #include <string>
+#include <queue>
 
-Tree::Tree(std::size_t root_key, const std::string& filename) {
+
+Tree::Tree(const std::string& filename) {
 	std::fstream file(filename);
 	if (!file.is_open())
 		throw std::exception("Cant open file");
@@ -21,9 +24,6 @@ Tree::Tree(std::size_t root_key, const std::string& filename) {
 
 	nodes.resize(size);
 	adjacency_list.resize(size);
-	adjacency_matrix.resize(size);
-	for (std::vector<int>& row : adjacency_matrix)
-		row.resize(size);
 
 	std::size_t key;
 	double weight;
@@ -31,8 +31,6 @@ Tree::Tree(std::size_t root_key, const std::string& filename) {
 		file >> key;
 		file >> weight;
 		nodes[key] = { key, weight };
-		if (key == root_key)
-			root = nodes[key];
 	}
 
 	std::vector<int> in_code(size, 0);
@@ -54,9 +52,6 @@ Tree::Tree(std::size_t root_key, const std::string& filename) {
 				adjacency_list[i].push_back(code_key);
 				adjacency_list[code_key].push_back(i);
 
-				adjacency_matrix[i][code_key] =
-					adjacency_matrix[code_key][i] = 1;
-
 				is_used[i] = 1;
 				--in_code[code_key];
 				code.pop_back();
@@ -68,21 +63,68 @@ Tree::Tree(std::size_t root_key, const std::string& filename) {
 			adjacency_list[i].push_back(size - 1);
 			adjacency_list[size - 1].push_back(i);
 
-			adjacency_matrix[i][size - 1] =
-				adjacency_matrix[size - 1][i] = 1;
-
 			break;
 		}
 
+}
+
+Tree::Tree(std::size_t size_): size(size_) {
+	if (size == 0)
+		throw std::exception("Size must be a positive value");
+	nodes.resize(size);
+	adjacency_list.resize(size);
+
+	std::random_device seed;
+	std::default_random_engine r(seed());
+	std::uniform_int_distribution<int> discrete(1, 50);
+	std::uniform_real_distribution<double> uniform(1, 100);
+
+	for (std::size_t i = 0; i < size; ++i) 
+		nodes[i] = { i, uniform(r) };
+
+	std::vector<int> is_used(size, 0);
+	std::vector<int> C(size, 100);
+	std::vector<std::size_t> E(size);
+
+	using edge = std::pair<std::size_t, double>;
+	auto cmp = [](edge left,
+				  edge right)
+	{ return left.second < right.second; };
+	std::priority_queue<edge, std::vector<edge>, decltype(cmp)> priority(cmp);
+
+	//start with an arbitrary edge
+	priority.emplace(0, 0);
+
+	while (!priority.empty()) {
+		std::size_t current_key = priority.top().first; priority.pop();
+		if (is_used[current_key])
+			continue;
+
+		for (std::size_t next_key = 0; next_key < size; ++next_key) { //adjacent vertices emulation
+			if (next_key == current_key)
+				continue;
+
+			int connection_cost = discrete(r); //random matrix emulation
+			if (!is_used[next_key] && C[next_key] > connection_cost) {
+				priority.emplace(next_key, connection_cost);
+				C[next_key] = connection_cost;
+				E[next_key] = current_key;
+			}
+		}
+
+		if (current_key != E[current_key]) {
+			adjacency_list[current_key].push_back(E[current_key]);
+			adjacency_list[E[current_key]].push_back(current_key);
+		}
+
+		is_used[current_key] = 1;
+	}
 }
 
 std::size_t Tree::getSize() const {
 	return size;
 }
 
-Node Tree::getRoot() const {
-	return root;
-}
 
 Node Tree::getNode(std::size_t key) const {
 	return nodes[key];
@@ -93,13 +135,12 @@ const std::vector<std::size_t>& Tree::getAdjacent(std::size_t key) const {
 }
 
 void Tree::print() const {
-	std::cout << "Root: " << root.key << std::endl;
-
+	std::cout << "Tree:" << std::endl;
 	for (std::size_t i = 0; i < adjacency_list.size(); ++i) {
 		std::cout << i << ": ";
-		for (std::size_t j = 0; j < adjacency_list[i].size(); ++j) {
-			std::cout << adjacency_list[i][j] << ", ";
-		}
+		for (std::size_t j = 0; j < adjacency_list[i].size(); ++j) 
+			if (j != adjacency_list[i].size() - 1)
+				std::cout << adjacency_list[i][j] << ", ";
 		std::cout << std::endl;
 	}
 }

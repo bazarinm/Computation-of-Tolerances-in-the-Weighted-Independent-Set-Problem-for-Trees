@@ -1,10 +1,7 @@
 #include "Algorithm.h"
 
 #include "Tree.h"
-#include "NaiveList.h"
 #include <queue>
-#include <list>
-#include <iostream>
 #include <fstream>
 
 namespace TreeTol {
@@ -17,7 +14,7 @@ namespace TreeTol {
 			std::queue<std::size_t> parents;
 			std::vector<int> is_used(t.getSize(), 0);
 			
-			Node root = t.getRoot();
+			Node root = t.getNode(0);
 			InfoNode info_root = { root.key, root.weight, root.key, {} };
 			BFS_order.push_back(info_root);
 			parents.push(root.key);
@@ -119,7 +116,7 @@ namespace TreeTol {
 			}
 		}
 
-		std::size_t root_key = t.getRoot().key;
+		std::size_t root_key = BFS_order[0].key;
 		for (InfoNode x : BFS_order) { 
 			if (is_used[x.key]) {
 				l[x.key] = w[root_key] - Wout[x.key];
@@ -131,22 +128,6 @@ namespace TreeTol {
 			}
 		}
 
-		/*std::cout << "max independed set: " << std::endl;
-		for (std::size_t key : s) {
-			std::cout << "key " << key << " of weight " << t.getNode(key).weight << std::endl;
-		}
-		std::cout << "total weight = " << w[t.getRoot().key];
-
-		std::cout << std::endl << std::endl;
-
-		std::cout << "tolerances: " << std::endl;
-		for (InfoNode x : BFS_order) {
-			std::size_t key = x.key;
-			if(is_used[key])
-				std::cout << "key " << key << " with lower tolerance " << l[key] << std::endl;
-			else
-				std::cout << "key " << key << " with upper tolerance " << u[key] << std::endl;
-		}*/
 		printResult("results.txt", l, u);
 	}
 
