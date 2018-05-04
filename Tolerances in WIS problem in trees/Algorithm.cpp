@@ -63,7 +63,10 @@ namespace {
 
 
 void computeTolerances(const Tree& t) {
-    std::vector<InfoNode> BFS_order = makeOrdered(t);
+    /* copying is acceptable here:
+    despite each of the elements stores a vector, it is of the same time complexity;
+    I'd rather find a way to avoid it though */
+    std::vector<InfoNode> BFS_order = makeOrdered(t); 
     std::size_t size = t.getSize();
 
     /* w[x] == maximum weight of the independent set 
