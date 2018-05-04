@@ -22,10 +22,10 @@ public:
 
 	void print() const;
 private:
-	std::size_t size;
+	std::size_t _size;
 
-	std::vector<Node> nodes;
-	std::vector<std::vector<std::size_t>> adjacency_list;
+	std::vector<Node> _nodes;
+	std::vector<std::vector<std::size_t>> _adjacency_list;
 };
 
 #endif
