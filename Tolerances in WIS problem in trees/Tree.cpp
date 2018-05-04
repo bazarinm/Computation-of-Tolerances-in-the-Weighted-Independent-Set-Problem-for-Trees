@@ -8,7 +8,7 @@
 #include <string>
 #include <queue>
 
-/* Build a tree from a file containing Prufer sequence and weight of each node */
+/* Build a tree from a file containing Prufer sequence and node weights */
 Tree::Tree(const std::string& filename) {
     std::fstream file(filename);
     if (!file.is_open())
