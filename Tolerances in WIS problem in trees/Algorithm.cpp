@@ -4,7 +4,6 @@
 #include <queue>
 #include <fstream>
 
-
 namespace {
 
     /* traverse the tree in the BFS order, extracting required data about each node */

@@ -2,6 +2,7 @@
 #define TREE_H
 
 #include <vector>
+#include <string>
 
 struct Node {
 	std::size_t key;
