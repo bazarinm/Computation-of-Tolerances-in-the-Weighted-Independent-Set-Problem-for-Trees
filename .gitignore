@@ -260,5 +260,6 @@ paket-files/
 __pycache__/
 *.pyc
 
-# output
-.dat
+# input/output files
+*.dat
+*.txt
