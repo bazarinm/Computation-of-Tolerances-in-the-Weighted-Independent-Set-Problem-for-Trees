@@ -6,7 +6,7 @@
 
 namespace {
 
-    /* traverse the tree in the BFS order, extracting required data about each node */
+    /* traverse the tree in the BFS order, extracting required data on each node */
     std::vector<InfoNode> makeOrdered(const Tree& t) 
     {
         std::vector<InfoNode> BFS_order;
