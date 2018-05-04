@@ -27,15 +27,25 @@ Tree::Tree(const std::string& filename) {
 
     std::size_t key;
     double weight;
+    std::vector<int> is_used(_size, 0);
     while (!file.eof()) {
         file >> key;
         file >> weight;
+        if (key > _nodes.size() - 1)
+            throw std::runtime_error("Some key value exceeds the tree size");
+        if (is_used[key] == 1)
+            throw std::runtime_error("Some weight values were specified several times");
+
         _nodes[key] = { key, weight };
+        is_used[key] = 1;
     }
+    for (int flag : is_used)
+        if (flag == 0)
+            throw std::runtime_error("Some weight values were not specified");
 
     //Prufer sequence decoding begins here
     std::vector<int> in_code(_size, 0);
-    std::vector<int> is_used(_size, 0);
+    is_used = std::vector<int>(_size, 0);
 
     for (std::size_t code_key : code)
         if (code_key > _size)
